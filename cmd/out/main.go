@@ -1,29 +1,39 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	// "github.com/sirupsen/logrus"
+)
+
+var (
+	rootOpts struct {
+		dir      string
+		logLevel string
+	}
 )
 
 func main() {
-	run()
+	rootCmd := newRootCmd()
+	rootCmd.Execute()
 }
 
-func run() {
+func newRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   filepath.Base(os.Args[0]),
 		Short: "Tests prerequisites for installing OpenShift with the UPI method",
 		Long:  "",
-		Run: runRootCmd,
+		SilenceUsage:     true,
+		// Run: runRootCmd,
 	}
 
-	rootCmd.Execute()
+	rootCmd.AddCommand(newTestCommand())
+	rootCmd.PersistentFlags().StringVar(&rootOpts.dir, "dir", ".", "directory containing install-config.yaml")
+
+	return rootCmd
 }
 
-func runRootCmd(cmd *cobra.Command, args []string) {
-	fmt.Println("hello world!")
-}
+// func runRootCmd(cmd *cobra.Command, args []string) {
+// 	fmt.Println("hello world!")
+// }
